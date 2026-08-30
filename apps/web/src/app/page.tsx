@@ -104,9 +104,12 @@ export default function Page() {
   return (
     <div className="page">
       <div className="header">
-        <div>
-          <h1>Crypto Arbitrage Scanner</h1>
-          <div className="tagline">Spot markets · USDT/USDC · executable order-book depth, not last price</div>
+        <div className="brand">
+          <div className="mark">⇄</div>
+          <div>
+            <h1>Crypto Arbitrage Scanner</h1>
+            <div className="tagline">Spot markets · USDT/USDC · executable order-book depth, not last price</div>
+          </div>
         </div>
       </div>
 
