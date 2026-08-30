@@ -321,7 +321,7 @@ describe('calculateRoute — status and freshness gates', () => {
     expect(outcome.value.warnings.some((w) => /memo/i.test(w))).toBe(true);
   });
 
-  it('rejects STALE_DATA when an input is older than the max age, computed at calculation time', () => {
+  it('rejects STALE_DATA when an order book is older than the max age, computed at calculation time', () => {
     const input = baseRouteInput();
     input.buy.fetchedAt = '2025-12-31T23:00:00.000Z'; // 1 hour before `now`
     input.options.maxDataAgeSec = 90;
@@ -329,6 +329,28 @@ describe('calculateRoute — status and freshness gates', () => {
     expect(outcome.ok).toBe(false);
     if (outcome.ok) return;
     expect(outcome.reason).toBe('STALE_DATA');
+  });
+
+  it('rejects STALE_DATA when network/withdrawal data is older than its own (looser) age limit', () => {
+    const input = baseRouteInput();
+    input.transferBuySide = baseTransfer({ fetchedAt: '2025-12-31T23:50:00.000Z' }); // 10 min before `now`
+    input.options.maxTransferDataAgeSec = 300; // 5 minutes
+    const outcome = calculateRoute(input);
+    expect(outcome.ok).toBe(false);
+    if (outcome.ok) return;
+    expect(outcome.reason).toBe('STALE_DATA');
+  });
+
+  it('does NOT reject on network data age alone when it is within its own looser limit, even though it exceeds the tighter order-book limit', () => {
+    // This is exactly the bug this pair of tests guards against: currency/
+    // network data refreshes on a multi-minute cadence and must not be held
+    // to the same tight threshold as fast-moving order books.
+    const input = baseRouteInput();
+    input.transferBuySide = baseTransfer({ fetchedAt: '2025-12-31T23:57:00.000Z' }); // 3 min before `now`
+    input.options.maxDataAgeSec = 90; // 90s — tighter than the transfer data's age
+    input.options.maxTransferDataAgeSec = 600; // 10 minutes — transfer data is within this
+    const outcome = calculateRoute(input);
+    expect(outcome.ok).toBe(true);
   });
 });
 

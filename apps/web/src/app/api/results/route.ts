@@ -2,7 +2,7 @@ import { Decimal } from '@scanner/core';
 import { ensureScanLoopStarted, computeSnapshot } from '@/server/scanLoop';
 import { getAllHealth } from '@/server/state';
 import { jsonResponse } from '@/server/serialize';
-import { MAX_DATA_AGE_SEC_DEFAULT } from '@/server/config';
+import { MAX_DATA_AGE_SEC_DEFAULT, MAX_TRANSFER_DATA_AGE_SEC_DEFAULT } from '@/server/config';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,9 +26,10 @@ export async function GET(request: Request): Promise<Response> {
   const adverseBufferBps = parseDecimal(q.get('adverseBufferBps'), 10);
   const strictMode = q.get('strictMode') !== 'false';
   const maxDataAgeSec = Number(q.get('maxDataAgeSec') ?? MAX_DATA_AGE_SEC_DEFAULT);
+  const maxTransferDataAgeSec = Number(q.get('maxTransferDataAgeSec') ?? MAX_TRANSFER_DATA_AGE_SEC_DEFAULT);
 
   const exchangesParam = q.get('exchanges');
-  const enabledExchangeIds = exchangesParam ? exchangesParam.split(',').filter(Boolean) : ['binance', 'bybit', 'kucoin'];
+  const enabledExchangeIds = exchangesParam ? exchangesParam.split(',').filter(Boolean) : ['binance', 'bybit', 'kucoin', 'okx'];
 
   const quotesParam = q.get('quotes');
   const quotes = (quotesParam ? quotesParam.split(',') : ['USDT', 'USDC']).filter(
@@ -43,6 +44,9 @@ export async function GET(request: Request): Promise<Response> {
     adverseBufferBps,
     strictMode,
     maxDataAgeSec: Number.isFinite(maxDataAgeSec) ? maxDataAgeSec : MAX_DATA_AGE_SEC_DEFAULT,
+    maxTransferDataAgeSec: Number.isFinite(maxTransferDataAgeSec)
+      ? maxTransferDataAgeSec
+      : MAX_TRANSFER_DATA_AGE_SEC_DEFAULT,
   });
 
   return jsonResponse({ snapshot, health: getAllHealth() });

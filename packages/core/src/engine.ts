@@ -19,10 +19,18 @@ export function calculateRoute(input: RouteInput): Outcome<RouteResult> {
   const sellBookAge = ageSeconds(sell.fetchedAt, now);
   const transferBuyAge = ageSeconds(transferBuySide.fetchedAt, now);
   const transferSellAge = ageSeconds(transferSellSide.fetchedAt, now);
-  const oldestAge = Math.max(buyBookAge, sellBookAge, transferBuyAge, transferSellAge);
+  const bookAge = Math.max(buyBookAge, sellBookAge);
+  const transferAge = Math.max(transferBuyAge, transferSellAge);
+  const oldestAge = Math.max(bookAge, transferAge);
 
-  if (oldestAge > options.maxDataAgeSec) {
-    return reject('STALE_DATA', `oldest input is ${oldestAge.toFixed(0)}s old (limit ${options.maxDataAgeSec}s)`);
+  if (bookAge > options.maxDataAgeSec) {
+    return reject('STALE_DATA', `order book is ${bookAge.toFixed(0)}s old (limit ${options.maxDataAgeSec}s)`);
+  }
+  if (transferAge > options.maxTransferDataAgeSec) {
+    return reject(
+      'STALE_DATA',
+      `network/withdrawal data is ${transferAge.toFixed(0)}s old (limit ${options.maxTransferDataAgeSec}s)`,
+    );
   }
 
   if (transferBuySide.withdrawEnabled === null) {

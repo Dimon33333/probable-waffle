@@ -3,7 +3,14 @@ import { ASSET_ALLOWLIST, Decimal, ageSeconds, type RejectionReason } from '@sca
 import { getState, bookKey, type ScanSnapshot } from './state';
 import { buildAndPriceRoute, oldestAgeAcrossCache, type CandidateParams } from './routeBuilder';
 import { notifyOpportunities } from './telegram';
-import { MARKETS_TTL_MS, CURRENCIES_TTL_MS, ORDER_BOOK_DEPTH, SCAN_INTERVAL_MS, MAX_DATA_AGE_SEC_DEFAULT } from './config';
+import {
+  MARKETS_TTL_MS,
+  CURRENCIES_TTL_MS,
+  ORDER_BOOK_DEPTH,
+  SCAN_INTERVAL_MS,
+  MAX_DATA_AGE_SEC_DEFAULT,
+  MAX_TRANSFER_DATA_AGE_SEC_DEFAULT,
+} from './config';
 
 const QUOTES = ['USDT', 'USDC'] as const;
 
@@ -148,6 +155,7 @@ export interface ComputeSnapshotParams {
   adverseBufferBps: Decimal;
   strictMode: boolean;
   maxDataAgeSec: number;
+  maxTransferDataAgeSec: number;
 }
 
 /**
@@ -166,6 +174,7 @@ export function computeSnapshot(params: ComputeSnapshotParams): ScanSnapshot {
     adverseBufferBps: params.adverseBufferBps,
     strictMode: params.strictMode,
     maxDataAgeSec: params.maxDataAgeSec,
+    maxTransferDataAgeSec: params.maxTransferDataAgeSec,
   };
 
   const opportunities: ScanSnapshot['opportunities'] = [];
@@ -222,6 +231,7 @@ export function defaultCandidateParams(): ComputeSnapshotParams {
     adverseBufferBps: new Decimal(10),
     strictMode: true,
     maxDataAgeSec: MAX_DATA_AGE_SEC_DEFAULT,
+    maxTransferDataAgeSec: MAX_TRANSFER_DATA_AGE_SEC_DEFAULT,
   };
 }
 

@@ -79,7 +79,16 @@ export interface SellLegInput extends LegInput {
 
 export interface RouteOptions {
   adverseBufferBps: Decimal;
+  /** Max age for the order books themselves — these move fast, so this is the tight, user-facing threshold. */
   maxDataAgeSec: number;
+  /**
+   * Max age for network/withdrawal-fee data (from the currency snapshot).
+   * This refreshes on its own multi-minute cadence (status flips less often
+   * than order books do) — gating it against the same tight `maxDataAgeSec`
+   * would make every route reject STALE_DATA a couple of minutes after any
+   * scan, regardless of how fresh the actual order books are.
+   */
+  maxTransferDataAgeSec: number;
   minNetProfitPct: Decimal;
   strictMode: boolean; // reject FEE_UNKNOWN / STATUS_UNKNOWN routes instead of downgrading confidence
 }

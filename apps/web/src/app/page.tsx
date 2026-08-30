@@ -13,7 +13,7 @@ const POLL_MS = 8000;
 const DEFAULT_STATE: ControlsState = {
   amountPreset: '100',
   customAmount: '100',
-  exchanges: ['binance', 'bybit', 'kucoin'],
+  exchanges: ['binance', 'bybit', 'kucoin', 'okx'],
   quotes: ['USDT', 'USDC'],
   minNetProfitPct: '0',
   adverseBufferBps: '10',

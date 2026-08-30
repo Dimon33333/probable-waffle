@@ -72,6 +72,7 @@ export function baseRouteInput(overrides: Partial<RouteInput> = {}): RouteInput 
     options: {
       adverseBufferBps: new Decimal(0),
       maxDataAgeSec: 90,
+      maxTransferDataAgeSec: 600,
       minNetProfitPct: new Decimal(0),
       strictMode: false,
     },

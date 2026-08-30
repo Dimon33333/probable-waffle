@@ -21,6 +21,7 @@ export interface CandidateParams {
   adverseBufferBps: Decimal;
   strictMode: boolean;
   maxDataAgeSec: number;
+  maxTransferDataAgeSec: number;
 }
 
 export type CandidateOutcome =
@@ -157,6 +158,7 @@ export function buildAndPriceRoute(
     options: {
       adverseBufferBps: params.adverseBufferBps,
       maxDataAgeSec: params.maxDataAgeSec,
+      maxTransferDataAgeSec: params.maxTransferDataAgeSec,
       minNetProfitPct: params.minNetProfitPct,
       strictMode: params.strictMode,
     },
