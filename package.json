@@ -1,0 +1,20 @@
+{
+  "name": "crypto-arbitrage-scanner",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w @scanner/core -w @scanner/adapters -w web",
+    "test": "npm run test -w @scanner/core -w @scanner/adapters",
+    "typecheck": "npm run typecheck -w @scanner/core -w @scanner/adapters -w web",
+    "lint": "npm run lint -w web",
+    "dev": "npm run dev -w web",
+    "start": "npm run start -w web"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}
